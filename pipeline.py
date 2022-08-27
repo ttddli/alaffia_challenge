@@ -19,7 +19,7 @@ def extract(coin):
     return identifiers
 
 def transform(id, identifiers, task_run):
-    exchanges = str(list(set(identifiers)))
+    exchanges = ','.join(list(set(identifiers)))
     return id, exchanges, task_run
 
 def load(id, exchanges, taskRun):
