@@ -22,8 +22,7 @@ def call_api(lst):
     coin_job = {'coins': lst}
 
     response = requests.post(url=API_ENDPOINT, json=coin_job, headers=headers)
-    status = response.status_code
-    print (f"Status: {str(status)} ")
+    print (f"{response.status_code}: Status of each ID in this request ({response.json()})")
 
 def schedule_job(request_limit, task_limit, delay=400):
     """
@@ -37,7 +36,7 @@ def schedule_job(request_limit, task_limit, delay=400):
         if groups >= int(request_limit):
             break
 
-        if index % int(task_limit) == 0 :
+        if index % int(task_limit) == 0:
             if group:
                 call_api(group)
                 groups += 1

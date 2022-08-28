@@ -24,8 +24,7 @@ In this repo, a pipeline is created to receive POST request, and then retrieve e
 ## How to run it?
 
 ### Prerequisites
-- Make sure you have Docker installed in your computer
-- Make sure you have Git installed in your computer
+- Make sure you have Docker and Git installed in your computer
 
 ### Set local environment for pipeline
 1. Create new project folder
@@ -66,6 +65,17 @@ cd testing_zhongyuan_li/alaffia_challenge
 ````
 python3 pipeline_runner.py 1000 4 1500
 ````
+
+3. Response
+- *Overall status is 200, if this request only has 200 or 404*
+````
+200: Status of each ID in this request ([200, 404, 200, 200])
+````
+- *Overall status is 429 if there is 1+ 429*
+````
+429: Status of each ID in this request ([200, 429, 429, 429])
+````
+**You need to increase the delay if you see 429**
 
 ### SQL: Check the result:
 1. Run Postgres

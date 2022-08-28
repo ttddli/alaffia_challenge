@@ -4,21 +4,26 @@ from datetime import datetime
 from sqlalchemy import exc
 import logging
 
+
+
 def extract(coin):
     url = f'https://api.coingecko.com/api/v3/coins/{coin}/tickers'
     response = requests.get(url)
     data = response.json()
 
     if "error" in data and data['error'] == "Could not find coin with the given id":
-        return None
+        return None, 404
 
-    try:
+    if 'tickers' in data:
         tickers = data['tickers']
         identifiers = [x['market']['identifier'] for x in tickers]
-        return identifiers
-    except Exception as e:
-        print(url + '\n' + str(data))
-        raise Exception
+        return identifiers, 200
+
+    if 'status' in data and 'error_code' in data['status']:
+        return None, int(data['status']['error_code'])
+
+    return None, None
+
 
 def transform(id, identifiers, task_run):
     exchanges = ','.join(list(set(identifiers)))
@@ -32,9 +37,9 @@ def ingest_data(body):
     ids = body['coins']
     task_run = int(datetime.now().timestamp() * 1000000)
 
-    new_records = 0
+    status = []
     for id in ids:
-        identifiers = extract(id)
+        identifiers, status_code = extract(id)
 
         if identifiers:
             # Transform data based on the requirement
@@ -43,9 +48,10 @@ def ingest_data(body):
             # Load data into destination
             try:
                 load(id, exchanges, taskRun)
-                new_records += 1
             except exc.SQLAlchemyError as e:
                 print("Ignore duplicated records")
 
-    return new_records
+        status.append(status_code)
+
+    return status
 

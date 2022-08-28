@@ -1,6 +1,6 @@
 import os
 from data_model import db, Coin
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from pipeline import ingest_data
 
 app = Flask(__name__)
@@ -17,8 +17,12 @@ def initialize_database():
 @app.route('/coins', methods=['POST'])
 def create_item():
   body = request.get_json()
-  task_groups = ingest_data(body)
-  return f"{task_groups} record(s) added"
+  status = ingest_data(body)
+
+  if 429 in status:
+    return make_response(jsonify(status), 429)
+  else:
+    return make_response(jsonify(status), 200)
 
 # List all record of <id>
 @app.route('/coins/<id>', methods=['GET'])
