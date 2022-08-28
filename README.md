@@ -6,6 +6,8 @@
 This is the code for Alaffia API challenge.
 In this repo, a pipeline is created to receive POST request, and then retrieve exchanges for a coin, save all the result to a postgres DB.
 
+![Screenshot](architecture diagram.png)
+
 
 ## API Service Files
 - **app.py**: API file running with FLASK, which receives POST request
@@ -137,3 +139,5 @@ select * from (select UNNEST(string_to_array(exchanges, ',')) as exchange from c
     if "error" in data and data['error'] == "Could not find coin with the given id":
         return None, 404
 ````
+
+#### Future improvement: Calling API in Parallel could be used in this project to improve the performance
