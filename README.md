@@ -109,6 +109,9 @@ select * from (select UNNEST(string_to_array(exchanges, ',')) as exchange from c
 - This number can be easily collected without any calculation logic
 - It can show the sequence of all requests
 - There will not be duplicates (with microsecond precision)
+````commandline
+    task_run = int(datetime.now().timestamp() * 1000000)
+````
 
 
 #### How to handle duplicates records (with same id)?
