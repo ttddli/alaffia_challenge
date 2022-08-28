@@ -7,15 +7,19 @@ This is the code for Alaffia API challenge.
 In this repo, a pipeline is created to receive POST request, and then retrieve exchanges for a coin, save all the result to a postgres DB.
 
 
-## Code Files
-- app.py: API file running with FLASK, which receives POST request
-- pipeline.py: Business logic of this pipeline, including 4 functions: ingest_data(), extract(), transform(), load()
-- data_model.py: Define the data model (Columns and types)
+## API Service Files
+- **app.py**: API file running with FLASK, which receives POST request
+- **pipeline.py**: Business logic of this pipeline, including 4 functions: ingest_data(), extract(), transform(), load()
+- **data_model.py**: Define the data model (Columns and types)
+
+## Pipeline Files
+- **pipeline_runner.py**: The script triggering the pipeline to load data
+- **coin_file.csv**: The file including all coin ids
 
 ## Configuration Files
-- Dockerfile: Make image for container
-- docker-compose.yml: Define services and their configurations (pythonapp and DB)
-- requirement.txt: List all dependencies of this project (python libs)
+- **Dockerfile**: Make image for container
+- **docker-compose.yml**: Define services and their configurations (pythonapp and DB)
+- **requirement.txt**: List all dependencies of this project (python libs)
 
 ## How to run it?
 
@@ -46,20 +50,22 @@ cd alaffia_challenge
 docker compose up
 ```
 
-### Schedule pipeline
-To send a POST request to the API, the blow command needs to be sent to API:
+### Trigger pipeline
+1. Directly call API to manually load data into DB
 ```
 curl --location --request POST 'http://localhost:80/coins' \
 --header 'Content-Type: application/json' \
 --data-raw '{"coins":["bitcoin", "pascalcoin"]}'
 ```
-Job scheduler:
-1. Airflow (BashOperator)
-2. crontab 
-```
-* * * * * curl --location --request POST 'http://localhost:80/coins' --header 'Content-Type: application/json' --data-raw '{"coins":["bitcoin", "pascalcoin"]}'
-```
-3. etc.
+
+2. Execute pipeline runner (via Aiflow - BashOperator, Crontab, or Manually trigger)
+````
+cd testing_zhongyuan_li/alaffia_challenge
+````
+*Run pipeline_runner by giving request_limit(=1000), task_limit(=4) and delay (=1500ms)*
+````
+python3 pipeline_runner.py 1000 4 1500
+````
 
 ### SQL: Check the result:
 1. Run Postgres
