@@ -114,6 +114,15 @@ select * from (select UNNEST(string_to_array(exchanges, ',')) as exchange from c
 #### How to handle duplicates records (with same id)?
 - Save all records into DB no matter it appeared before or Not
 - DB (data model) will handle duplicate records based on the primary key
+
+````
+    try:
+        load(id, exchanges, taskRun)
+    except exc.SQLAlchemyError as e:
+        print("Ignore duplicated records")
+
+````
+
 ````
   id = db.Column(db.String(80), primary_key=True)
   exchanges = db.Column(db.Text, unique=False, primary_key=False)
