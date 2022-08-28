@@ -102,3 +102,26 @@ select UNNEST(string_to_array(exchanges, ',')) as exchange, (max(task_run) + min
 ```
 select * from (select UNNEST(string_to_array(exchanges, ',')) as exchange from coin) as temp where exchange like '%x%'
 ```
+
+### Notes
+#### How to get run_task?
+- Using timestamp (big int - Unix time) of api request as run_task value
+- This number can be easily collected without any calculation logic
+- It can show the sequence of all requests
+- There will not be duplicates (with microsecond precision)
+
+
+#### How to handle duplicates records (with same id)?
+- Save all records into DB no matter it appeared before or Not
+- DB (data model) will handle duplicate records based on the primary key
+````
+  id = db.Column(db.String(80), primary_key=True)
+  exchanges = db.Column(db.Text, unique=False, primary_key=False)
+  task_run = db.Column(db.BigInteger, unique=False, primary_key=False)
+````
+
+#### How to handle invalid id?
+````
+    if "error" in data and data['error'] == "Could not find coin with the given id":
+        return None, 404
+````

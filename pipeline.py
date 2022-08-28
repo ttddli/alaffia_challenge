@@ -35,6 +35,9 @@ def load(id, exchanges, taskRun):
 
 def ingest_data(body):
     ids = body['coins']
+
+    # How to get task_run: Use the timestamp as the task_run.
+    # This number can be easily collected, and also show the sequence of each request without duplicates.
     task_run = int(datetime.now().timestamp() * 1000000)
 
     status = []
