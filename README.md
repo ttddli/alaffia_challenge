@@ -6,7 +6,7 @@
 This is the code for Alaffia API challenge.
 In this repo, a pipeline is created to receive POST request, and then retrieve exchanges for a coin, save all the result to a postgres DB.
 
-![Screenshot](architecture diagram.png)
+![Screenshot](architecture_diagram.png)
 
 
 ## API Service Files
