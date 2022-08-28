@@ -5,18 +5,20 @@ from sqlalchemy import exc
 import logging
 
 def extract(coin):
-    response = requests.get(f'https://api.coingecko.com/api/v3/coins/{coin}/tickers')
+    url = f'https://api.coingecko.com/api/v3/coins/{coin}/tickers'
+    response = requests.get(url)
     data = response.json()
+
     if "error" in data and data['error'] == "Could not find coin with the given id":
         return None
 
     try:
         tickers = data['tickers']
         identifiers = [x['market']['identifier'] for x in tickers]
+        return identifiers
     except Exception as e:
-        logging.error(f'Failed to parse API result due to {e}')
-
-    return identifiers
+        print(url + '\n' + str(data))
+        raise Exception
 
 def transform(id, identifiers, task_run):
     exchanges = ','.join(list(set(identifiers)))
@@ -43,7 +45,7 @@ def ingest_data(body):
                 load(id, exchanges, taskRun)
                 new_records += 1
             except exc.SQLAlchemyError as e:
-                logging.warning("Ignore duplicated records")
+                print("Ignore duplicated records")
 
     return new_records
 
